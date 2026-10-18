@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+
+# 个人文件，不上传到公开仓库
+CLAUDE.md
+进度笔记.md
+.claude/

@@ -1,0 +1,27 @@
+---
+import { tagUrl } from '../lib/posts';
+
+interface Props {
+  tags: [string, number][];
+  title?: string;
+}
+
+const { tags, title = '标签' } = Astro.props;
+---
+
+<section class="card">
+  <h2 class="card-title">{title}</h2>
+  {tags.length > 0 ? (
+    <ul class="tag-list">
+      {tags.map(([tag, count]) => (
+        <li><a class="tag" href={tagUrl(tag)}>{tag}<small>{count}</small></a></li>
+      ))}
+    </ul>
+  ) : (
+    <p class="empty">还没有标签，写文章时加上就会出现在这里。</p>
+  )}
+</section>
+
+<style>
+  .empty { margin: 0; color: var(--muted); font-size: 14px; }
+</style>

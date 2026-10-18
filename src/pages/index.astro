@@ -1,0 +1,188 @@
+---
+import Base from '../layouts/Base.astro';
+import ProfileCard from '../components/ProfileCard.astro';
+import PostCard from '../components/PostCard.astro';
+import TagCloud from '../components/TagCloud.astro';
+import { SITE, CATEGORIES } from '../site.config';
+import { getPosts, tagCounts, formatDate } from '../lib/posts';
+
+const posts = await getPosts();
+const tags = tagCounts(posts);
+const lastUpdate = posts[0] ? formatDate(posts[0].data.date).slice(5) : '—';
+const filters = ['全部', ...CATEGORIES];
+---
+
+<Base>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">QINGYE NOTES</p>
+      <h1>{SITE.heroTitle}</h1>
+      <p class="hero-text">{SITE.heroText}</p>
+    </div>
+    <dl class="stats">
+      <div><dt>篇文章</dt><dd>{String(posts.length).padStart(2, '0')}</dd></div>
+      <div><dt>个标签</dt><dd>{String(tags.length).padStart(2, '0')}</dd></div>
+      <div><dt>最近更新</dt><dd>{lastUpdate}</dd></div>
+    </dl>
+  </section>
+
+  <div class="layout">
+    <div class="col-left">
+      <ProfileCard postCount={posts.length} tagCount={tags.length} />
+    </div>
+
+    <section class="col-main" aria-label="文章列表">
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="按分类筛选">
+          {filters.map((f, i) => (
+            <button type="button" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}>{f}</button>
+          ))}
+        </div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input id="search" type="search" placeholder="搜索文章标题、摘要、标签" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="post-list">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+      <p id="empty" class="empty" hidden={posts.length > 0}>还没有文章，写好第一篇就会出现在这里。</p>
+    </section>
+
+    <div class="col-right">
+      <TagCloud tags={tags} />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 44px 0 28px;
+  }
+  .eyebrow { margin: 0; font-size: 12px; letter-spacing: 0.2em; color: var(--accent); }
+  h1 { margin: 4px 0 0; font-size: 40px; line-height: 1.2; color: var(--title); }
+  .hero-text { margin: 10px 0 0; color: var(--muted); }
+  .stats { display: flex; gap: 28px; margin: 0; }
+  .stats div { display: flex; flex-direction: column-reverse; align-items: center; }
+  .stats dd { margin: 0; font-size: 28px; font-weight: 600; color: var(--title); line-height: 1.2; }
+  .stats dt { font-size: 12px; color: var(--muted); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr) 250px;
+    gap: 24px;
+    align-items: start;
+  }
+  .col-left, .col-right { position: sticky; top: 84px; display: grid; gap: 20px; }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; }
+  .filters button {
+    padding: 5px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--accent-strong);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .filters button:hover { background: var(--card); }
+  .filters button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 1 260px;
+    padding: 0 12px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--muted);
+  }
+  .search:focus-within { border-color: var(--accent); }
+  .search svg { width: 16px; height: 16px; flex: none; }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .post-list { display: grid; gap: 14px; }
+  .empty {
+    margin: 0;
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--muted);
+    background: var(--card);
+    border-radius: var(--radius);
+  }
+
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 230px minmax(0, 1fr); }
+    .col-right { grid-column: 1; grid-row: 2; position: static; }
+    .col-main { grid-row: 1 / span 2; grid-column: 2; }
+  }
+
+  @media (max-width: 760px) {
+    .hero { flex-direction: column; align-items: flex-start; padding: 28px 0 20px; }
+    h1 { font-size: 32px; }
+    .stats { gap: 24px; }
+    .stats div { align-items: flex-start; }
+    .stats dd { font-size: 24px; }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .col-left, .col-right { position: static; }
+    .col-main, .col-right { grid-column: auto; grid-row: auto; }
+    .search { flex: 1 1 100%; }
+  }
+</style>
+
+<script>
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const input = document.getElementById('search') as HTMLInputElement;
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-post]')];
+  const empty = document.getElementById('empty') as HTMLElement;
+  let category = '全部';
+
+  function apply() {
+    const words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    let shown = 0;
+    for (const card of cards) {
+      const okCategory = category === '全部' || card.dataset.category === category;
+      const okSearch = words.every((w) => card.dataset.search!.includes(w));
+      card.hidden = !(okCategory && okSearch);
+      if (!card.hidden) shown++;
+    }
+    if (cards.length === 0) return;
+    empty.hidden = shown > 0;
+    empty.textContent = words.length > 0 ? '没找到相关文章，换个词试试' : '这个分类还没有文章，敬请期待';
+  }
+
+  for (const btn of buttons) {
+    btn.addEventListener('click', () => {
+      category = btn.dataset.filter!;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      apply();
+    });
+  }
+  input.addEventListener('input', apply);
+</script>

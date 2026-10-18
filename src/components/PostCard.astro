@@ -1,0 +1,47 @@
+---
+import { formatDate, postUrl, tagUrl, type Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, date, category, tags, summary } = post.data;
+const searchText = [title, summary, category, ...tags].join(' ').toLowerCase();
+---
+
+<article class="post-card" data-post data-category={category} data-search={searchText}>
+  <div class="meta">
+    <time datetime={date.toISOString()}>{formatDate(date)}</time>
+    <span aria-hidden="true">·</span>
+    <span>{category}</span>
+  </div>
+  <h3><a href={postUrl(post)}>{title}</a></h3>
+  <p class="summary">{summary}</p>
+  {tags.length > 0 && (
+    <ul class="tag-list">
+      {tags.map((t) => <li><a class="tag" href={tagUrl(t)}>{t}</a></li>)}
+    </ul>
+  )}
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 18px 20px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(59, 109, 17, 0.08);
+  }
+  .meta { display: flex; gap: 6px; font-size: 13px; color: var(--accent-strong); }
+  h3 { margin: 4px 0 6px; font-size: 19px; line-height: 1.45; }
+  h3 a { color: var(--title); text-decoration: none; }
+  h3 a:hover { color: var(--accent-strong); }
+  .summary { margin: 0 0 10px; color: var(--muted); font-size: 15px; }
+  .tag-list { position: relative; z-index: 1; }
+</style>

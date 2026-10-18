@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+import LeafIcon from '../components/LeafIcon.astro';
+import { SITE } from '../site.config';
+import { url } from '../lib/posts';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = SITE.heroText } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+
+const path = Astro.url.pathname;
+const nav = [
+  { label: '文章', href: url('/'), active: path === url('/') || path.startsWith(url('/posts/')) },
+  { label: '标签', href: url('/tags/'), active: path.startsWith(url('/tags/')) },
+  { label: '关于', href: url('/about/'), active: path.startsWith(url('/about')) },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="logo" href={url('/')}><LeafIcon />{SITE.name}</a>
+        <nav class="nav" aria-label="主导航">
+          {nav.map((item) => (
+            <a href={item.href} aria-current={item.active ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">© {new Date().getFullYear()} {SITE.author} · 用 Astro 搭建</div>
+    </footer>
+  </body>
+</html>

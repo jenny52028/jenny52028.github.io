@@ -1,0 +1,43 @@
+---
+import LeafIcon from './LeafIcon.astro';
+import { SITE } from '../site.config';
+
+interface Props {
+  postCount: number;
+  tagCount: number;
+}
+
+const { postCount, tagCount } = Astro.props;
+---
+
+<aside class="card profile">
+  <div class="avatar"><LeafIcon /></div>
+  <h2 class="name">{SITE.author}</h2>
+  <p class="signature">{SITE.signature}</p>
+  <p class="counts">{postCount} 篇文章 · {tagCount} 个标签</p>
+</aside>
+
+<style>
+  .profile { text-align: center; padding: 28px 20px 22px; }
+  .avatar {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+  }
+  .avatar :global(svg) { width: 44px; height: 44px; }
+  .name { margin: 0; font-size: 20px; color: var(--title); }
+  .signature { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+  .counts {
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

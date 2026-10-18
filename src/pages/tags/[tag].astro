@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts, tagCounts, url, type Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return tagCounts(posts).map(([tag]) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props as { tag: string; posts: Post[] };
+---
+
+<Base title={`标签：${tag}`}>
+  <section class="page-head">
+    <p><a href={url('/tags/')}>← 全部标签</a></p>
+    <h1># {tag}</h1>
+    <p>共 {posts.length} 篇文章</p>
+  </section>
+  <div class="post-list">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</Base>
+
+<style>
+  .post-list { display: grid; gap: 14px; max-width: 780px; }
+</style>

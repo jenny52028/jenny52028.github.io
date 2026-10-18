@@ -1,0 +1,100 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getPosts, formatDate, tagUrl, url, type Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { title, date, category, tags, summary } = post.data;
+const { Content } = await render(post);
+---
+
+<Base title={title} description={summary}>
+  <article class="article card">
+    <header>
+      <div class="meta">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{category}</span>
+      </div>
+      <h1>{title}</h1>
+      {tags.length > 0 && (
+        <ul class="tag-list">
+          {tags.map((t) => <li><a class="tag" href={tagUrl(t)}>{t}</a></li>)}
+        </ul>
+      )}
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer>
+      <a class="back" href={url('/')}>← 返回文章列表</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .article {
+    max-width: 780px;
+    margin: 36px auto 0;
+    padding: 36px 44px;
+  }
+  header { padding-bottom: 20px; margin-bottom: 8px; border-bottom: 1px solid var(--line-soft); }
+  .meta { display: flex; gap: 6px; font-size: 14px; color: var(--accent-strong); }
+  h1 { margin: 6px 0 14px; font-size: 30px; line-height: 1.4; color: var(--title); }
+  footer { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
+  .back {
+    display: inline-block;
+    padding: 6px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .back:hover { background: var(--bg); }
+
+  .prose { font-size: 16.5px; line-height: 1.9; overflow-wrap: anywhere; }
+  .prose :global(h2) { margin: 2em 0 0.6em; font-size: 22px; color: var(--title); }
+  .prose :global(h3) { margin: 1.6em 0 0.5em; font-size: 18px; color: var(--title); }
+  .prose :global(p) { margin: 1em 0; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.4em; }
+  .prose :global(li) { margin: 0.3em 0; }
+  .prose :global(img) { max-width: 100%; height: auto; border-radius: 8px; }
+  .prose :global(blockquote) {
+    margin: 1.2em 0;
+    padding: 8px 16px;
+    border-left: 3px solid var(--line);
+    background: var(--bg);
+    color: var(--muted);
+  }
+  .prose :global(code) {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--bg);
+  }
+  .prose :global(pre) {
+    padding: 14px 16px;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .prose :global(pre code) { padding: 0; background: none; }
+  .prose :global(table) { display: block; overflow-x: auto; border-collapse: collapse; }
+  .prose :global(th), .prose :global(td) { padding: 6px 12px; border: 1px solid var(--line-soft); }
+  .prose :global(hr) { border: 0; border-top: 1px dashed var(--line); margin: 2em 0; }
+
+  @media (max-width: 640px) {
+    .article { margin-top: 16px; padding: 22px 18px; }
+    h1 { font-size: 24px; }
+    .prose { font-size: 16px; }
+  }
+</style>
