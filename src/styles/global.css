@@ -37,6 +37,7 @@ body {
   font-family: var(--font);
   font-size: 16px;
   line-height: 1.75;
+  overflow-x: clip;
 }
 
 a { color: var(--accent-strong); }

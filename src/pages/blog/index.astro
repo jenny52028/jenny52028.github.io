@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProfileCard from '../../components/ProfileCard.astro';
+import PostCard from '../../components/PostCard.astro';
+import TagCloud from '../../components/TagCloud.astro';
+import ClockCard from '../../components/ClockCard.astro';
+import T from '../../components/T.astro';
+import { SITE, CATEGORIES, EN } from '../../site.config';
+import { getPosts, tagCounts, formatDate } from '../../lib/posts';
+
+const posts = await getPosts();
+const tags = tagCounts(posts);
+const lastUpdate = posts[0] ? formatDate(posts[0].data.date).slice(5) : '—';
+const filters = ['全部', ...CATEGORIES];
+---
+
+<Base title="博客" titleEn="Blog">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">QINGYE NOTES</p>
+      <h1><T zh={SITE.heroTitle} en={SITE.heroTitleEn} /></h1>
+      <p class="hero-text"><T zh={SITE.heroText} en={SITE.heroTextEn} /></p>
+    </div>
+    <dl class="stats">
+      <div><dt><T zh="篇文章" en="Posts" /></dt><dd>{String(posts.length).padStart(2, '0')}</dd></div>
+      <div><dt><T zh="个标签" en="Tags" /></dt><dd>{String(tags.length).padStart(2, '0')}</dd></div>
+      <div><dt><T zh="最近更新" en="Updated" /></dt><dd>{lastUpdate}</dd></div>
+    </dl>
+  </section>
+
+  <div class="layout">
+    <div class="col-left">
+      <ProfileCard postCount={posts.length} tagCount={tags.length} />
+    </div>
+
+    <section class="col-main" aria-label="文章列表">
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="按分类筛选">
+          {filters.map((f, i) => (
+            <button type="button" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}><T zh={f} en={EN[f]} /></button>
+          ))}
+        </div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input id="search" type="search" placeholder="搜索文章标题、摘要、标签" data-ph-zh="搜索文章标题、摘要、标签" data-ph-en="Search posts" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="post-list">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+      <p id="empty" class="empty" hidden={posts.length > 0}><T zh="还没有文章，写好第一篇就会出现在这里。" en="No posts yet." /></p>
+    </section>
+
+    <div class="col-right">
+      <ClockCard />
+      <TagCloud tags={tags} />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 44px 0 28px;
+  }
+  .eyebrow { margin: 0; font-size: 12px; letter-spacing: 0.2em; color: var(--accent); }
+  h1 { margin: 4px 0 0; font-size: 40px; line-height: 1.2; color: var(--title); }
+  .hero-text { margin: 10px 0 0; color: var(--muted); }
+  .stats { display: flex; gap: 28px; margin: 0; }
+  .stats div { display: flex; flex-direction: column-reverse; align-items: center; }
+  .stats dd { margin: 0; font-size: 28px; font-weight: 600; color: var(--title); line-height: 1.2; }
+  .stats dt { font-size: 12px; color: var(--muted); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr) 250px;
+    gap: 24px;
+    align-items: start;
+  }
+  .col-left, .col-right { position: sticky; top: calc(var(--header-h) + 16px); display: grid; gap: 20px; }
+  .post-list { display: grid; gap: 14px; }
+
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 230px minmax(0, 1fr); }
+    .col-right { grid-column: 1; grid-row: 2; position: static; }
+    .col-main { grid-row: 1 / span 2; grid-column: 2; }
+  }
+
+  @media (max-width: 760px) {
+    .hero { flex-direction: column; align-items: flex-start; padding: 28px 0 20px; }
+    h1 { font-size: 32px; }
+    .stats { gap: 24px; }
+    .stats div { align-items: flex-start; }
+    .stats dd { font-size: 24px; }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .col-left, .col-right { position: static; }
+    .col-main, .col-right { grid-column: auto; grid-row: auto; }
+  }
+</style>
+
+<script>
+  import { setupFilter } from '../../lib/filter';
+  setupFilter({
+    itemSelector: '[data-post]',
+    noResult: { zh: '没找到相关文章，换个词试试', en: 'No matching posts. Try another word.' },
+    emptyCategory: { zh: '这个分类还没有文章，敬请期待', en: 'Nothing in this category yet.' },
+  });
+</script>

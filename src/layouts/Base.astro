@@ -17,10 +17,10 @@ const fullTitleEn = titleEn ? `${titleEn} · ${SITE.name}` : SITE.name;
 
 const path = Astro.url.pathname;
 const nav = [
-  { zh: '博客', en: 'Blog', href: url('/'), active: path === url('/') || path.startsWith(url('/posts/')) },
+  { zh: '首页', en: 'Home', href: url('/'), active: path === url('/') },
+  { zh: '博客', en: 'Blog', href: url('/blog/'), active: path.startsWith(url('/blog')) || path.startsWith(url('/posts/')) },
   { zh: '资源中心', en: 'Resources', href: url('/resources/'), active: path.startsWith(url('/resources')) },
   { zh: '标签', en: 'Tags', href: url('/tags/'), active: path.startsWith(url('/tags/')) },
-  { zh: '关于', en: 'About', href: url('/about/'), active: path.startsWith(url('/about')) },
 ];
 ---
 

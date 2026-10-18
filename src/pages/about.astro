@@ -1,0 +1,21 @@
+---
+// 「关于」页已经合并进首页，旧网址 /about/ 自动跳到首页的「关于我」
+import { url } from '../lib/posts';
+
+const target = url('/#about');
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>关于 · 青叶 · 小记</title>
+    <script is:inline define:vars={{ target }}>location.replace(target);</script>
+  </head>
+  <body>
+    <p><a href={target}>「关于」已经搬到首页，点这里查看</a></p>
+  </body>
+</html>
