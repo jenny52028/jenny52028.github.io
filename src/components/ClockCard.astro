@@ -1,24 +1,28 @@
 ---
 // 时间与日历小卡片：时钟每秒走动，可切换时区，可展开当月日历，显示下一个节日
+import T from './T.astro';
+
 const zones = [
-  { value: '', label: '跟随设备时区' },
-  { value: 'Asia/Shanghai', label: '北京时间' },
-  { value: 'Asia/Tokyo', label: '东京' },
-  { value: 'Europe/London', label: '伦敦' },
-  { value: 'America/New_York', label: '纽约' },
-  { value: 'America/Los_Angeles', label: '洛杉矶' },
-  { value: 'Australia/Sydney', label: '悉尼' },
+  { value: '', label: '跟随设备时区', en: 'Device time zone' },
+  { value: 'Asia/Shanghai', label: '北京时间', en: 'Beijing' },
+  { value: 'Asia/Tokyo', label: '东京', en: 'Tokyo' },
+  { value: 'Europe/London', label: '伦敦', en: 'London' },
+  { value: 'America/New_York', label: '纽约', en: 'New York' },
+  { value: 'America/Los_Angeles', label: '洛杉矶', en: 'Los Angeles' },
+  { value: 'Australia/Sydney', label: '悉尼', en: 'Sydney' },
 ];
+const weekZh = ['日', '一', '二', '三', '四', '五', '六'];
+const weekEn = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 ---
 
 <section class="card clock" data-clock>
   <div class="head">
     <h2 class="card-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-      时间与日历
+      <T zh="时间与日历" en="Clock" />
     </h2>
     <button type="button" class="pill" data-cal-toggle aria-expanded="false">
-      <span data-cal-label>日历</span>
+      <span data-cal-label><T zh="日历" en="Calendar" /></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 10h16M9 3v4M15 3v4" /></svg>
     </button>
   </div>
@@ -27,9 +31,9 @@ const zones = [
   <p class="date" data-date>&nbsp;</p>
 
   <label class="zone">
-    <span>当前时区</span>
+    <T zh="当前时区" en="Time zone" />
     <select data-zone>
-      {zones.map((z) => <option value={z.value}>{z.label}</option>)}
+      {zones.map((z) => <option value={z.value} data-zh={z.label} data-en={z.en}>{z.label}</option>)}
     </select>
   </label>
 
@@ -40,7 +44,7 @@ const zones = [
       <button type="button" data-next aria-label="下个月">›</button>
     </div>
     <div class="grid week" aria-hidden="true">
-      {['日', '一', '二', '三', '四', '五', '六'].map((w) => <span>{w}</span>)}
+      {weekZh.map((w, i) => <T zh={w} en={weekEn[i]} />)}
     </div>
     <div class="grid days" data-days></div>
   </div>
@@ -137,7 +141,23 @@ const zones = [
 
     const KEY = 'qingye-clock-zone';
     const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+    const WEEK_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const MONTH_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const HOLIDAY_EN: Record<string, string> = {
+      元旦: "New Year's Day", 春节: 'Spring Festival', 清明节: 'Qingming Festival', 劳动节: 'Labour Day',
+      端午节: 'Dragon Boat Festival', 中秋节: 'Mid-Autumn Festival', 国庆节: 'National Day',
+    };
+    // 中英两份文字，CSS 按当前语言显示其中一份
+    const bi = (zh: string, en: string) => `<span class="i18n-zh">${zh}</span><span class="i18n-en" lang="en">${en}</span>`;
     type Day = { y: number; m: number; d: number };
+
+    // 时区下拉框的选项文字跟着语言变
+    function updateZoneLabels() {
+      const en = document.documentElement.dataset.lang === 'en';
+      for (const opt of zoneEl.options) opt.textContent = (en ? opt.dataset.en : opt.dataset.zh) ?? '';
+    }
+    window.addEventListener('langchange', updateZoneLabels);
+    updateZoneLabels();
 
     let zone = '';
     try { zone = localStorage.getItem(KEY) ?? ''; } catch {}
@@ -212,7 +232,10 @@ const zones = [
         const date = new Date(start.getTime() + i * 86400000);
         const name = holidayOf(date);
         if (!name) continue;
-        holidayEl.innerHTML = i === 0 ? `今天是 <b>${name}</b>` : `下一个节日 · <b>${name}</b>（还有 ${i} 天）`;
+        const en = HOLIDAY_EN[name];
+        holidayEl.innerHTML = i === 0
+          ? bi(`今天是 <b>${name}</b>`, `Today is <b>${en}</b>`)
+          : bi(`下一个节日 · <b>${name}</b>（还有 ${i} 天）`, `Next holiday · <b>${en}</b> (in ${i} ${i === 1 ? 'day' : 'days'})`);
         return;
       }
       holidayEl.textContent = '';
@@ -222,7 +245,7 @@ const zones = [
     let view = { y: 0, m: 0 };
 
     function renderCalendar() {
-      monthEl.textContent = `${view.y} 年 ${view.m} 月`;
+      monthEl.innerHTML = bi(`${view.y} 年 ${view.m} 月`, `${MONTH_EN[view.m - 1]} ${view.y}`);
       const first = utc(view.y, view.m, 1).getUTCDay();
       const total = utc(view.y, view.m + 1, 0).getUTCDate();
       const cells: string[] = [];
@@ -241,7 +264,8 @@ const zones = [
       if (n.y !== today.y || n.m !== today.m || n.d !== today.d) {
         today = { y: n.y, m: n.m, d: n.d };
         view = { y: n.y, m: n.m };
-        dateEl.textContent = `${pad(n.m)}/${pad(n.d)} 星期${WEEK[utc(n.y, n.m, n.d).getUTCDay()]}`;
+        const w = utc(n.y, n.m, n.d).getUTCDay();
+        dateEl.innerHTML = bi(`${pad(n.m)}/${pad(n.d)} 星期${WEEK[w]}`, `${WEEK_EN[w]}, ${pad(n.m)}/${pad(n.d)}`);
         renderCalendar();
         renderHoliday(today);
       }
@@ -260,7 +284,7 @@ const zones = [
       const open = calEl.hidden;
       calEl.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
-      toggleLabel.textContent = open ? '收起' : '日历';
+      toggleLabel.innerHTML = open ? bi('收起', 'Hide') : bi('日历', 'Calendar');
       if (open) { view = { y: today.y, m: today.m }; renderCalendar(); }
     });
 

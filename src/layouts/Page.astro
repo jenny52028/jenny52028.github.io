@@ -1,12 +1,15 @@
 ---
 import Base from './Base.astro';
+import T from '../components/T.astro';
 
 const { frontmatter } = Astro.props;
+const titleEn = frontmatter.titleEn ?? frontmatter.title;
 ---
 
-<Base title={frontmatter.title} description={frontmatter.description}>
+<Base title={frontmatter.title} titleEn={titleEn} description={frontmatter.description}>
   <article class="card page">
-    <h1>{frontmatter.title}</h1>
+    <h1><T zh={frontmatter.title} en={titleEn} /></h1>
+    <p class="i18n-en lang-note" lang="en">This page is in Chinese.</p>
     <div class="prose"><slot /></div>
   </article>
 </Base>

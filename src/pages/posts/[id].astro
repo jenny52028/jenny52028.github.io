@@ -1,6 +1,8 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import T from '../../components/T.astro';
+import { EN } from '../../site.config';
 import { getPosts, formatDate, tagUrl, url, type Post } from '../../lib/posts';
 
 export async function getStaticPaths() {
@@ -19,9 +21,10 @@ const { Content } = await render(post);
       <div class="meta">
         <time datetime={date.toISOString()}>{formatDate(date)}</time>
         <span aria-hidden="true">·</span>
-        <span>{category}</span>
+        <span><T zh={category} en={EN[category]} /></span>
       </div>
       <h1>{title}</h1>
+      <p class="i18n-en lang-note" lang="en">This article is in Chinese.</p>
       {tags.length > 0 && (
         <ul class="tag-list">
           {tags.map((t) => <li><a class="tag" href={tagUrl(t)}>{t}</a></li>)}
@@ -34,7 +37,7 @@ const { Content } = await render(post);
     </div>
 
     <footer>
-      <a class="back" href={url('/')}>← 返回文章列表</a>
+      <a class="back" href={url('/')}><T zh="← 返回文章列表" en="← Back to blog" /></a>
     </footer>
   </article>
 </Base>

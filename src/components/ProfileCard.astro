@@ -1,6 +1,8 @@
 ---
 import LeafIcon from './LeafIcon.astro';
+import T from './T.astro';
 import { SITE } from '../site.config';
+import { plural } from '../lib/posts';
 
 interface Props {
   postCount: number;
@@ -12,9 +14,9 @@ const { postCount, tagCount } = Astro.props;
 
 <aside class="card profile">
   <div class="avatar"><LeafIcon /></div>
-  <h2 class="name">{SITE.author}</h2>
-  <p class="signature">{SITE.signature}</p>
-  <p class="counts">{postCount} 篇文章 · {tagCount} 个标签</p>
+  <h2 class="name"><T zh={SITE.author} en={SITE.authorEn} /></h2>
+  <p class="signature"><T zh={SITE.signature} en={SITE.signatureEn} /></p>
+  <p class="counts"><T zh={`${postCount} 篇文章 · ${tagCount} 个标签`} en={`${plural(postCount, 'post')} · ${plural(tagCount, 'tag')}`} /></p>
 </aside>
 
 <style>

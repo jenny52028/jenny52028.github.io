@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
-import { getPosts, tagCounts, url, type Post } from '../../lib/posts';
+import T from '../../components/T.astro';
+import { getPosts, tagCounts, url, plural, type Post } from '../../lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -14,11 +15,11 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props as { tag: string; posts: Post[] };
 ---
 
-<Base title={`标签：${tag}`}>
+<Base title={`标签：${tag}`} titleEn={`Tag: ${tag}`}>
   <section class="page-head">
-    <p><a href={url('/tags/')}>← 全部标签</a></p>
+    <p><a href={url('/tags/')}><T zh="← 全部标签" en="← All tags" /></a></p>
     <h1># {tag}</h1>
-    <p>共 {posts.length} 篇文章</p>
+    <p><T zh={`共 ${posts.length} 篇文章`} en={plural(posts.length, 'post')} /></p>
   </section>
   <div class="post-list">
     {posts.map((post) => <PostCard post={post} />)}

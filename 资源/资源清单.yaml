@@ -1,0 +1,88 @@
+# 资源中心的资源清单
+#
+# 加一条新资源：复制下面任意一条（从 "- id:" 开始到 en 那一行），粘贴到最后，然后改内容。
+#   id：英文小写、不重复，比如 my-tool
+#   name：名称
+#   url：网址，要带 https://
+#   category：只能填 AI 工具 / 开发工具 / 学习资料 其中之一
+#   zh：中文一句话介绍
+#   en：英文一句话介绍（不会写可以先空着，跟赛博说一声帮你翻译）
+# 注意：每行开头的空格要和上面对齐，冒号后面留一个空格。
+# 顺序：网站上按这个文件里的先后顺序显示。
+
+- id: codex
+  name: Codex
+  url: https://openai.com/codex/
+  category: AI 工具
+  zh: OpenAI 打造的 AI 编程助手，能读懂项目、改代码、运行命令，ChatGPT 付费套餐里就包含。
+  en: OpenAI's AI coding agent. It reads projects, edits code and runs commands, and comes with paid ChatGPT plans.
+
+- id: claude
+  name: Claude
+  url: https://claude.ai
+  category: AI 工具
+  zh: Anthropic 做的 AI 助手，这个博客就是和它一起做出来的。
+  en: Anthropic's AI assistant. This blog was built together with it.
+
+- id: deepseek
+  name: DeepSeek
+  url: https://www.deepseek.com
+  category: AI 工具
+  zh: 国产 AI 助手，中文对话流畅，网页版免费就能用。
+  en: A Chinese AI assistant that's fluent in Chinese and free to use on the web.
+
+- id: volcengine-ark
+  name: 火山方舟
+  url: https://www.volcengine.com/product/ark
+  category: AI 工具
+  zh: 字节跳动的大模型平台，可以调用豆包、Seedream 等模型的接口。
+  en: ByteDance's model platform, with APIs for Doubao, Seedream and more.
+
+- id: trae
+  name: TRAE
+  url: https://www.trae.cn
+  category: 开发工具
+  zh: 字节跳动的 AI 编程工具，打开项目文件夹就能看文件、改代码。
+  en: ByteDance's AI coding tool. Open a project folder to read files and edit code.
+
+- id: github
+  name: GitHub
+  url: https://github.com
+  category: 开发工具
+  zh: 存放代码的网站。这个博客就免费放在它的 GitHub Pages 上。
+  en: Where code lives. This blog is hosted for free on its GitHub Pages.
+
+- id: nodejs
+  name: Node.js
+  url: https://nodejs.org/zh-cn
+  category: 开发工具
+  zh: 很多网站工具运行时都要用到它，可以理解成搭网站的发动机。
+  en: Many website tools run on it. Think of it as the engine for building sites.
+
+- id: astro
+  name: Astro
+  url: https://astro.build
+  category: 开发工具
+  zh: 专门做内容网站的免费工具，写好 Markdown 文章就能生成博客。
+  en: A free tool for content sites. Write Markdown and it builds the blog for you.
+
+- id: github-docs
+  name: GitHub 中文文档
+  url: https://docs.github.com/zh
+  category: 学习资料
+  zh: GitHub 官方帮助文档的中文版，建仓库、发布网站都有教程。
+  en: GitHub's official docs in Chinese, with guides on repositories and Pages.
+
+- id: astro-docs
+  name: Astro 中文文档
+  url: https://docs.astro.build/zh-cn/getting-started/
+  category: 学习资料
+  zh: Astro 官方教程的中文版，想自己改博客样子时可以查。
+  en: Astro's official docs in Chinese, handy when you want to change the blog yourself.
+
+- id: markdown-basics
+  name: Markdown 基本语法
+  url: https://markdown.com.cn/basic-syntax/
+  category: 学习资料
+  zh: 用例子讲清楚标题、列表、加粗、图片怎么写，写文章前看一遍就够。
+  en: Headings, lists, bold and images explained with examples. One read is enough to start writing.

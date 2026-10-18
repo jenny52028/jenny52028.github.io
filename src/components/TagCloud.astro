@@ -1,16 +1,18 @@
 ---
+import T from './T.astro';
 import { tagUrl } from '../lib/posts';
 
 interface Props {
   tags: [string, number][];
   title?: string;
+  titleEn?: string;
 }
 
-const { tags, title = '标签' } = Astro.props;
+const { tags, title = '标签', titleEn = 'Tags' } = Astro.props;
 ---
 
 <section class="card">
-  <h2 class="card-title">{title}</h2>
+  <h2 class="card-title"><T zh={title} en={titleEn} /></h2>
   {tags.length > 0 ? (
     <ul class="tag-list">
       {tags.map(([tag, count]) => (
@@ -18,10 +20,10 @@ const { tags, title = '标签' } = Astro.props;
       ))}
     </ul>
   ) : (
-    <p class="empty">还没有标签，写文章时加上就会出现在这里。</p>
+    <p class="empty-note"><T zh="还没有标签，写文章时加上就会出现在这里。" en="No tags yet." /></p>
   )}
 </section>
 
 <style>
-  .empty { margin: 0; color: var(--muted); font-size: 14px; }
+  .empty-note { margin: 0; color: var(--muted); font-size: 14px; }
 </style>

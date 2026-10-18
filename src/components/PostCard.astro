@@ -1,4 +1,6 @@
 ---
+import T from './T.astro';
+import { EN } from '../site.config';
 import { formatDate, postUrl, tagUrl, type Post } from '../lib/posts';
 
 interface Props {
@@ -7,14 +9,14 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, date, category, tags, summary } = post.data;
-const searchText = [title, summary, category, ...tags].join(' ').toLowerCase();
+const searchText = [title, summary, category, EN[category], ...tags].join(' ').toLowerCase();
 ---
 
 <article class="post-card" data-post data-category={category} data-search={searchText}>
   <div class="meta">
     <time datetime={date.toISOString()}>{formatDate(date)}</time>
     <span aria-hidden="true">·</span>
-    <span>{category}</span>
+    <span><T zh={category} en={EN[category]} /></span>
   </div>
   <h3><a href={postUrl(post)}>{title}</a></h3>
   <p class="summary">{summary}</p>

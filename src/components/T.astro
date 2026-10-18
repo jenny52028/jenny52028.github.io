@@ -1,0 +1,11 @@
+---
+// 中英双语文字：切到 EN 时显示 en，否则显示 zh
+interface Props {
+  zh: string | number;
+  en: string | number;
+}
+
+const { zh, en } = Astro.props;
+---
+
+<span class="i18n-zh">{zh}</span><span class="i18n-en" lang="en">{en}</span>

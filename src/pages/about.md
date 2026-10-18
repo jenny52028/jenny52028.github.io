@@ -1,6 +1,7 @@
 ---
 layout: ../layouts/Page.astro
 title: 关于
+titleEn: About
 description: 关于青叶和这个博客
 ---
 

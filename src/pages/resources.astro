@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import T from '../components/T.astro';
+import { RESOURCE_CATEGORIES, EN } from '../site.config';
+
+const resources = await getCollection('resources');
+const filters = ['全部', ...RESOURCE_CATEGORIES];
+---
+
+<Base title="资源中心" titleEn="Resources" description="青叶用过、觉得好用的网站和工具。">
+  <section class="page-head">
+    <p class="eyebrow">RESOURCES</p>
+    <h1><T zh="资源中心" en="Resources" /></h1>
+    <p><T zh="我用过、觉得好用的网站和工具，整理在这里。" en="Websites and tools I've used and found helpful." /></p>
+  </section>
+
+  <div class="toolbar">
+    <div class="filters" role="group" aria-label="按分类筛选">
+      {filters.map((f, i) => (
+        <button type="button" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}><T zh={f} en={EN[f]} /></button>
+      ))}
+    </div>
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+      <input id="search" type="search" placeholder="搜索资源名称、介绍" data-ph-zh="搜索资源名称、介绍" data-ph-en="Search resources" autocomplete="off" />
+    </label>
+  </div>
+
+  <div class="grid">
+    {resources.map(({ data }) => (
+      <article
+        class="res-card"
+        data-resource
+        data-category={data.category}
+        data-search={[data.name, data.zh, data.en, data.category, EN[data.category]].join(' ').toLowerCase()}
+      >
+        <h2>{data.name}</h2>
+        <p class="desc"><T zh={data.zh} en={data.en || data.zh} /></p>
+        <div class="foot">
+          <span class="tag"><T zh={data.category} en={EN[data.category]} /></span>
+          <a class="go" href={data.url} target="_blank" rel="noopener noreferrer"><T zh="去看看 →" en="Visit →" /></a>
+        </div>
+      </article>
+    ))}
+  </div>
+  <p id="empty" class="empty" hidden={resources.length > 0}><T zh="还没有资源，敬请期待。" en="No resources yet. Stay tuned." /></p>
+</Base>
+
+<style>
+  .eyebrow { margin: 0; font-size: 12px; letter-spacing: 0.2em; color: var(--accent); }
+  .page-head h1 { margin-top: 4px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .res-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .res-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(59, 109, 17, 0.08); }
+  .res-card h2 { margin: 0; font-size: 18px; color: var(--title); }
+  .desc { flex: 1; margin: 8px 0 16px; color: var(--muted); font-size: 15px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .go {
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .go:hover { background: var(--accent-strong); color: #fff; }
+  .empty { margin-top: 16px; }
+
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+
+<script>
+  import { setupFilter } from '../lib/filter';
+  setupFilter({
+    itemSelector: '[data-resource]',
+    noResult: { zh: '没找到相关资源，换个词试试', en: 'No matching resources. Try another word.' },
+    emptyCategory: { zh: '这个分类还没有资源', en: 'Nothing in this category yet.' },
+  });
+</script>

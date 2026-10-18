@@ -27,5 +27,8 @@ export function tagCounts(posts: Post[]) {
   return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh'));
 }
 
+/** 英文单复数：1 post / 2 posts */
+export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
 export const tagUrl = (tag: string) => url(`/tags/${encodeURIComponent(tag)}/`);
 export const postUrl = (post: Post) => url(`/posts/${post.id}/`);

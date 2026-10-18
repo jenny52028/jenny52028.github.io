@@ -1,15 +1,16 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TagCloud from '../../components/TagCloud.astro';
-import { getPosts, tagCounts } from '../../lib/posts';
+import T from '../../components/T.astro';
+import { getPosts, tagCounts, plural } from '../../lib/posts';
 
 const tags = tagCounts(await getPosts());
 ---
 
-<Base title="标签">
+<Base title="标签" titleEn="Tags">
   <section class="page-head">
-    <h1>标签</h1>
-    <p>一共 {tags.length} 个标签，点一个看看相关文章。</p>
+    <h1><T zh="标签" en="Tags" /></h1>
+    <p><T zh={`一共 ${tags.length} 个标签，点一个看看相关文章。`} en={`${plural(tags.length, 'tag')}. Pick one to see related posts.`} /></p>
   </section>
-  <TagCloud tags={tags} title="全部标签" />
+  <TagCloud tags={tags} title="全部标签" titleEn="All tags" />
 </Base>
