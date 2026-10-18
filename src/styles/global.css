@@ -133,7 +133,14 @@ a:hover { color: var(--title); }
 .lang-zh { color: var(--title); font-weight: 600; }
 html[data-lang='en'] .lang-zh { color: inherit; font-weight: 400; }
 html[data-lang='en'] .lang-en { color: var(--title); font-weight: 600; }
-.douyin svg { width: 16px; height: 16px; color: var(--accent); }
+.douyin {
+  gap: 10px;
+  padding: 0 14px 0 18px;
+  color: var(--title);
+  white-space: nowrap;
+}
+.douyin svg { width: 18px; height: 18px; color: var(--accent); transition: transform 0.15s ease; }
+.douyin:hover svg { transform: translate(2px, -2px); }
 
 /* 白色卡片 */
 .card {
@@ -248,9 +255,8 @@ a.tag:hover { color: var(--tag-text); filter: brightness(0.95); }
     grid-template-areas: 'logo actions' 'nav nav';
     gap: 8px 12px;
     height: auto;
-    padding-top: 10px;
-    padding-bottom: 10px;
   }
+  .site-header .header-inner { padding-top: 10px; padding-bottom: 10px; }
   .nav { justify-content: stretch; }
   .nav a { flex: 1; padding: 6px 4px; }
 }
@@ -259,9 +265,13 @@ a.tag:hover { color: var(--tag-text); filter: brightness(0.95); }
   .container { padding: 0 16px; }
   .logo { font-size: 16px; }
   .nav a { font-size: 14px; }
-  .douyin { padding: 0 9px; }
-  .douyin-text { display: none; }
+  .douyin { gap: 6px; padding: 0 10px 0 12px; font-size: 13px; }
+  .lang-toggle { padding: 0 10px; font-size: 13px; }
   .search { flex: 1 1 100%; }
   .page-head { padding: 28px 0 16px; }
   .page-head h1 { font-size: 26px; }
+}
+
+@media (max-width: 400px) {
+  .hide-narrow { display: none; }
 }
