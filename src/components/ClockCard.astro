@@ -1,0 +1,277 @@
+---
+// 时间与日历小卡片：时钟每秒走动，可切换时区，可展开当月日历，显示下一个节日
+const zones = [
+  { value: '', label: '跟随设备时区' },
+  { value: 'Asia/Shanghai', label: '北京时间' },
+  { value: 'Asia/Tokyo', label: '东京' },
+  { value: 'Europe/London', label: '伦敦' },
+  { value: 'America/New_York', label: '纽约' },
+  { value: 'America/Los_Angeles', label: '洛杉矶' },
+  { value: 'Australia/Sydney', label: '悉尼' },
+];
+---
+
+<section class="card clock" data-clock>
+  <div class="head">
+    <h2 class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+      时间与日历
+    </h2>
+    <button type="button" class="pill" data-cal-toggle aria-expanded="false">
+      <span data-cal-label>日历</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 10h16M9 3v4M15 3v4" /></svg>
+    </button>
+  </div>
+
+  <p class="time" data-time>--:--:--</p>
+  <p class="date" data-date>&nbsp;</p>
+
+  <label class="zone">
+    <span>当前时区</span>
+    <select data-zone>
+      {zones.map((z) => <option value={z.value}>{z.label}</option>)}
+    </select>
+  </label>
+
+  <div class="calendar" data-calendar hidden>
+    <div class="cal-head">
+      <button type="button" data-prev aria-label="上个月">‹</button>
+      <span data-month></span>
+      <button type="button" data-next aria-label="下个月">›</button>
+    </div>
+    <div class="grid week" aria-hidden="true">
+      {['日', '一', '二', '三', '四', '五', '六'].map((w) => <span>{w}</span>)}
+    </div>
+    <div class="grid days" data-days></div>
+  </div>
+
+  <p class="holiday" data-holiday></p>
+</section>
+
+<style>
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .head .card-title { display: flex; align-items: center; gap: 6px; margin: 0; }
+  .head .card-title svg { width: 16px; height: 16px; color: var(--accent); }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--accent-strong);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .pill:hover { background: var(--bg); }
+  .pill svg { width: 14px; height: 14px; }
+
+  .time {
+    margin: 14px 0 0;
+    font-family: var(--mono);
+    font-size: 36px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+    color: var(--accent-strong);
+    font-variant-numeric: tabular-nums;
+  }
+  .date { margin: 2px 0 0; font-weight: 600; color: var(--title); }
+
+  .zone { display: block; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .zone select {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+  }
+
+  .calendar { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; color: var(--title); font-weight: 600; font-size: 14px; }
+  .cal-head button {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--accent-strong);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .cal-head button:hover { background: var(--bg); }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+  .week { font-size: 12px; color: var(--muted); }
+  .days :global(span) { padding: 3px 0; font-size: 13px; line-height: 24px; }
+  .days :global(.today) {
+    justify-self: center;
+    width: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .holiday { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+  .holiday :global(b) { color: var(--accent-strong); font-weight: 600; }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-clock]');
+  if (root) {
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector(sel) as T;
+    const timeEl = $('[data-time]');
+    const dateEl = $('[data-date]');
+    const zoneEl = $<HTMLSelectElement>('[data-zone]');
+    const calEl = $('[data-calendar]');
+    const toggle = $('[data-cal-toggle]');
+    const toggleLabel = $('[data-cal-label]');
+    const monthEl = $('[data-month]');
+    const daysEl = $('[data-days]');
+    const holidayEl = $('[data-holiday]');
+
+    const KEY = 'qingye-clock-zone';
+    const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+    type Day = { y: number; m: number; d: number };
+
+    let zone = '';
+    try { zone = localStorage.getItem(KEY) ?? ''; } catch {}
+    zoneEl.value = zone;
+    if (zoneEl.value !== zone) zone = zoneEl.value = '';
+
+    // 取某个时区下的年月日时分秒
+    function now() {
+      const fmt = new Intl.DateTimeFormat('en-US', {
+        timeZone: zone || undefined,
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+      });
+      const p: Record<string, string> = {};
+      for (const part of fmt.formatToParts(new Date())) p[part.type] = part.value;
+      return { y: +p.year, m: +p.month, d: +p.day, time: `${p.hour}:${p.minute}:${p.second}` };
+    }
+
+    const utc = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d));
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    // 春节、端午、中秋的公历日期。浏览器自带农历在个别年份会差一天（如 2027、2030 年春节），
+    // 所以这几年用固定日期；表外的年份才用浏览器农历估算
+    const LUNAR: Record<number, [string, string, string]> = {
+      2026: ['2/17', '6/19', '9/25'],
+      2027: ['2/6', '6/9', '9/15'],
+      2028: ['1/26', '5/28', '10/3'],
+      2029: ['2/13', '6/16', '9/22'],
+      2030: ['2/3', '6/5', '9/12'],
+      2031: ['1/23', '6/24', '10/1'],
+      2032: ['2/11', '6/12', '9/19'],
+      2033: ['1/31', '6/1', '9/8'],
+      2034: ['2/19', '6/20', '9/27'],
+      2035: ['2/8', '6/10', '9/16'],
+    };
+
+    // 农历日期（浏览器自带的农历），不支持时返回 null
+    let lunarFmt: Intl.DateTimeFormat | null = null;
+    try { lunarFmt = new Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'UTC', month: 'numeric', day: 'numeric' }); } catch {}
+    function lunar(date: Date) {
+      if (!lunarFmt) return null;
+      const p: Record<string, string> = {};
+      for (const part of lunarFmt.formatToParts(date)) p[part.type] = part.value;
+      return `${p.month}/${p.day}`;
+    }
+
+    // 清明：每年 4 月 4 日或 5 日（21 世纪通用公式）
+    const qingming = (y: number) => Math.floor((y % 100) * 0.2422 + 4.81) - Math.floor((y % 100) / 4);
+
+    function holidayOf(date: Date) {
+      const y = date.getUTCFullYear(), m = date.getUTCMonth() + 1, d = date.getUTCDate();
+      const md = `${m}/${d}`;
+      if (md === '1/1') return '元旦';
+      if (md === '5/1') return '劳动节';
+      if (md === '10/1') return '国庆节';
+      if (m === 4 && d === qingming(y)) return '清明节';
+      const fixed = LUNAR[y];
+      if (fixed) {
+        const i = fixed.indexOf(md);
+        return i === -1 ? null : ['春节', '端午节', '中秋节'][i];
+      }
+      const l = lunar(date);
+      if (l === '1/1') return '春节';
+      if (l === '5/5') return '端午节';
+      if (l === '8/15') return '中秋节';
+      return null;
+    }
+
+    function renderHoliday(today: Day) {
+      const start = utc(today.y, today.m, today.d);
+      for (let i = 0; i < 400; i++) {
+        const date = new Date(start.getTime() + i * 86400000);
+        const name = holidayOf(date);
+        if (!name) continue;
+        holidayEl.innerHTML = i === 0 ? `今天是 <b>${name}</b>` : `下一个节日 · <b>${name}</b>（还有 ${i} 天）`;
+        return;
+      }
+      holidayEl.textContent = '';
+    }
+
+    let today: Day = { y: 0, m: 0, d: 0 };
+    let view = { y: 0, m: 0 };
+
+    function renderCalendar() {
+      monthEl.textContent = `${view.y} 年 ${view.m} 月`;
+      const first = utc(view.y, view.m, 1).getUTCDay();
+      const total = utc(view.y, view.m + 1, 0).getUTCDate();
+      const cells: string[] = [];
+      for (let i = 0; i < first; i++) cells.push('<span></span>');
+      for (let d = 1; d <= total; d++) {
+        const isToday = view.y === today.y && view.m === today.m && d === today.d;
+        cells.push(isToday ? `<span class="today" aria-current="date">${d}</span>` : `<span>${d}</span>`);
+      }
+      daysEl.innerHTML = cells.join('');
+    }
+
+    let timer = 0;
+    function tick() {
+      const n = now();
+      timeEl.textContent = n.time;
+      if (n.y !== today.y || n.m !== today.m || n.d !== today.d) {
+        today = { y: n.y, m: n.m, d: n.d };
+        view = { y: n.y, m: n.m };
+        dateEl.textContent = `${pad(n.m)}/${pad(n.d)} 星期${WEEK[utc(n.y, n.m, n.d).getUTCDay()]}`;
+        renderCalendar();
+        renderHoliday(today);
+      }
+      clearTimeout(timer);
+      timer = window.setTimeout(tick, 1000 - (Date.now() % 1000));
+    }
+
+    zoneEl.addEventListener('change', () => {
+      zone = zoneEl.value;
+      try { localStorage.setItem(KEY, zone); } catch {}
+      today = { y: 0, m: 0, d: 0 };
+      tick();
+    });
+
+    toggle.addEventListener('click', () => {
+      const open = calEl.hidden;
+      calEl.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggleLabel.textContent = open ? '收起' : '日历';
+      if (open) { view = { y: today.y, m: today.m }; renderCalendar(); }
+    });
+
+    const shift = (step: number) => {
+      const m = view.m + step;
+      view = { y: view.y + Math.floor((m - 1) / 12), m: ((m - 1 + 12) % 12) + 1 };
+      renderCalendar();
+    };
+    $('[data-prev]').addEventListener('click', () => shift(-1));
+    $('[data-next]').addEventListener('click', () => shift(1));
+
+    tick();
+  }
+</script>
