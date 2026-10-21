@@ -1,10 +1,9 @@
 ---
-// 首页右边的青叶形象：有 3D 模型就显示 3D（自动转、可拖动），没有就显示卡通图
+// 首页右边的青叶卡通形象，带浮动动画
 import { HOME } from '../site.config';
 import { url } from '../lib/posts';
 
 const avatar = url(HOME.avatar);
-const model = HOME.model ? url(HOME.model) : '';
 ---
 
 <div class="stage">
@@ -17,26 +16,7 @@ const model = HOME.model ? url(HOME.model) : '';
   <svg class="star star-3" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.6 4.4 10.4 12 12-7.6 1.6-11.2 5.4-12 12-.8-6.6-4.4-10.4-12-12C7.6 10.4 11.2 6.6 12 0z" /></svg>
 
   <div class="float">
-    {model ? (
-      <model-viewer
-        src={model}
-        poster={avatar}
-        alt="青叶的 3D 卡通形象"
-        loading="eager"
-        auto-rotate
-        auto-rotate-delay="0"
-        rotation-per-second="18deg"
-        camera-controls
-        disable-zoom
-        disable-pan
-        interaction-prompt="none"
-        touch-action="pan-y"
-        shadow-intensity="0.6"
-        exposure="1.05"
-      ></model-viewer>
-    ) : (
-      <img src={avatar} alt="青叶的卡通形象" width="900" height="876" fetchpriority="high" />
-    )}
+    <img src={avatar} alt="青叶的卡通形象" width="900" height="876" fetchpriority="high" />
   </div>
 </div>
 
@@ -67,14 +47,6 @@ const model = HOME.model ? url(HOME.model) : '';
     animation: float 5s ease-in-out infinite;
   }
   .float img { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 24px rgba(23, 52, 4, 0.12)); }
-  model-viewer {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    height: auto;
-    background: transparent;
-    --poster-color: transparent;
-  }
 
   .star { position: absolute; animation: twinkle 3.2s ease-in-out infinite; }
   .star-1 { top: 10%; left: 6%; width: 34px; fill: var(--title); }
@@ -89,8 +61,3 @@ const model = HOME.model ? url(HOME.model) : '';
     .rings, .float, .star { animation: none; }
   }
 </style>
-
-<script>
-  // 只有页面上真的有 3D 模型时，才加载 3D 显示组件（它比较大）
-  if (document.querySelector('model-viewer')) import('@google/model-viewer');
-</script>

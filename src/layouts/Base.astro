@@ -19,7 +19,7 @@ const path = Astro.url.pathname;
 const nav = [
   { zh: '首页', en: 'Home', href: url('/'), active: path === url('/') },
   { zh: '博客', en: 'Blog', href: url('/blog/'), active: path.startsWith(url('/blog')) || path.startsWith(url('/posts/')) },
-  { zh: '资源中心', en: 'Resources', href: url('/resources/'), active: path.startsWith(url('/resources')) },
+  { zh: '资源中心', en: 'Resources', href: url('/resources/'), active: path.startsWith(url('/resources')) || path.startsWith(url('/works/')) },
   { zh: '标签', en: 'Tags', href: url('/tags/'), active: path.startsWith(url('/tags/')) },
 ];
 ---

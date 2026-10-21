@@ -7,3 +7,6 @@ dist/
 CLAUDE.md
 进度笔记.md
 .claude/
+
+# 要上传到网盘和 GitHub Releases 的大文件，不进仓库
+上传文件/

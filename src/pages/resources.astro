@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import T from '../components/T.astro';
 import { RESOURCE_CATEGORIES, EN } from '../site.config';
+import { url } from '../lib/posts';
 
 const resources = await getCollection('resources');
 const filters = ['全部', ...RESOURCE_CATEGORIES];
@@ -35,11 +36,15 @@ const filters = ['全部', ...RESOURCE_CATEGORIES];
         data-category={data.category}
         data-search={[data.name, data.zh, data.en, data.category, EN[data.category]].join(' ').toLowerCase()}
       >
-        <h2>{data.name}</h2>
+        <h2>{data.image && <img class="icon" src={url(data.image)} alt="" width="40" height="40" />}{data.name}</h2>
         <p class="desc"><T zh={data.zh} en={data.en || data.zh} /></p>
         <div class="foot">
           <span class="tag"><T zh={data.category} en={EN[data.category]} /></span>
-          <a class="go" href={data.url} target="_blank" rel="noopener noreferrer"><T zh="去看看 →" en="Visit →" /></a>
+          {data.page ? (
+            <a class="go" href={url(data.page)}><T zh="了解详情 →" en="Learn more →" /></a>
+          ) : (
+            <a class="go" href={data.url} target="_blank" rel="noopener noreferrer"><T zh="去看看 →" en="Visit →" /></a>
+          )}
         </div>
       </article>
     ))}
@@ -62,7 +67,8 @@ const filters = ['全部', ...RESOURCE_CATEGORIES];
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   .res-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(59, 109, 17, 0.08); }
-  .res-card h2 { margin: 0; font-size: 18px; color: var(--title); }
+  .res-card h2 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 18px; color: var(--title); }
+  .icon { width: 40px; height: 40px; border-radius: 50%; }
   .desc { flex: 1; margin: 8px 0 16px; color: var(--muted); font-size: 15px; }
   .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .go {

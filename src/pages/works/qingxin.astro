@@ -1,0 +1,419 @@
+---
+// 我的作品：青心桌面宠 介绍页 + 下载
+import Base from '../../layouts/Base.astro';
+import T from '../../components/T.astro';
+import { QINGXIN } from '../../site.config';
+import { url } from '../../lib/posts';
+
+const img = (name: string) => url(`/works/qingxin/${name}`);
+
+const features = [
+  { zh: '打字陪伴：你在聊天框、浏览器、Word 里打字时，她会跑过来坐在输入框上陪你', en: "Typing buddy: when you type in a chat box, browser or Word, she hops onto the text box to keep you company" },
+  { zh: '摸摸头：鼠标在她头上来回滑，她会眯眼笑、冒爱心', en: 'Head pats: stroke her head with the mouse and she smiles with little hearts' },
+  { zh: '养成：喂饭、攒星星币、在小商店买家具布置小家；不会生病，也不会离开你', en: 'Care: feed her, earn star coins and decorate her little house. She never gets sick or leaves' },
+  { zh: '有作息：晚上 11 点到早上 7 点回小家睡觉', en: 'Bedtime: she sleeps in her little house from 11 pm to 7 am' },
+  { zh: '很懂事：你全屏看视频、打游戏时，她会自己躲回小家', en: 'Polite: she hides away when you watch videos or play games full screen' },
+  { zh: '第一次见面，她会问你该怎么称呼你', en: 'The first time you meet, she asks what to call you' },
+];
+
+// 封面上青心走到一边停下来时说的话
+const greetings = [
+  { zh: '你好呀～我是青心', en: "Hi~ I'm Qingxin" },
+  { zh: '要不要带我回家？', en: 'Take me home?' },
+  { zh: '你打字，我陪着你', en: "I'll sit with you while you type" },
+  { zh: '摸摸头我会很开心！', en: 'Head pats make me happy!' },
+];
+
+const gallery = [
+  { file: 'happy.webp', zh: '被摸头，开心', en: 'Happy after a head pat' },
+  { file: 'eat.webp', zh: '吃饭', en: 'Eating' },
+  { file: 'anim-walk.webp', zh: '散步', en: 'Out for a walk' },
+  { file: 'sit.webp', zh: '坐着陪你', en: 'Sitting with you' },
+  { file: 'held.webp', zh: '被拎起来', en: 'Picked up' },
+  { file: 'sleep.webp', zh: '睡觉', en: 'Sleeping' },
+];
+---
+
+<Base title="青心 · 桌面宠" titleEn="Qingxin desktop pet" description="青叶做的养成系桌面宠：你打字时她会跑来坐在输入框上陪你。支持 Windows 和苹果电脑。">
+  <p class="crumb"><a href={url('/resources/')}><T zh="← 资源中心" en="← Resources" /></a></p>
+
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">MY WORK</p>
+      <h1><T zh="青心" en="Qingxin" /></h1>
+      <p class="tagline"><T zh="陪你打字的养成系桌面宠" en="A desktop pet who keeps you company while you type" /></p>
+      <ul class="facts">
+        <li>v{QINGXIN.version}</li>
+        <li><T zh="免费" en="Free" /></li>
+        <li>Windows 10/11</li>
+        <li><T zh="苹果电脑（测试版）" en="macOS (beta)" /></li>
+      </ul>
+      <a class="primary" href="#download"><T zh="下载青心" en="Download" /><span aria-hidden="true">↓</span></a>
+    </div>
+
+    <div class="cover" data-stroll data-base={img('frames/')} data-greetings={JSON.stringify(greetings)}>
+      <div class="stroller" data-stroller>
+        <p class="say" data-say hidden></p>
+        <img class="pet" data-pet src={img('frames/happy-03.webp')} alt="青心在封面上来回散步，停下来笑着打招呼" width="320" height="400" />
+      </div>
+      <div class="cover-label">
+        <img src={img('icon.webp')} alt="" width="48" height="48" />
+        <div>
+          <strong><T zh="青心" en="Qingxin" /></strong>
+          <span><T zh="桌面宠物 · 养成系" en="Desktop pet" /></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2><T zh="她会做什么" en="What she does" /></h2>
+    <ul class="features">
+      {features.map((f) => <li><T zh={f.zh} en={f.en} /></li>)}
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2><T zh="她的样子" en="Meet her" /></h2>
+    {QINGXIN.screenshot && (
+      <figure class="shot">
+        <img src={url(QINGXIN.screenshot)} alt="青心坐在输入框上陪青叶打字的桌面截图" loading="lazy" />
+        <figcaption><T zh="打字时，青心坐在输入框上陪着你" en="Qingxin sitting on the text box while you type" /></figcaption>
+      </figure>
+    )}
+    <div class="gallery">
+      {gallery.map((g) => (
+        <figure>
+          <img src={img(g.file)} alt={g.zh} loading="lazy" />
+          <figcaption><T zh={g.zh} en={g.en} /></figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="block" id="download">
+    <h2><T zh="下载" en="Download" /></h2>
+    <p class="muted">
+      <T zh={`版本 v${QINGXIN.version} · 更新于 ${QINGXIN.updated} · 免费，仅限个人非商业使用`} en={`Version ${QINGXIN.version} · Updated ${QINGXIN.updated} · Free for personal, non-commercial use`} />
+    </p>
+    <div class="downloads">
+      {QINGXIN.downloads.map((d) => (
+        <article class={`dl dl-${d.os}`}>
+          <div class="dl-head">
+            <span class="os">{d.os === 'mac' ? 'macOS' : 'Windows'}</span>
+            <h3><T zh={d.zh} en={d.en} /></h3>
+          </div>
+          <p class="dl-note"><T zh={d.noteZh} en={d.noteEn} /></p>
+          <p class="dl-meta">{d.size} · <code>{d.file}</code></p>
+          <div class="dl-buttons">
+            {d.baidu ? (
+              <a class="btn" href={d.baidu} target="_blank" rel="noopener noreferrer">
+                <T zh="百度网盘" en="Baidu Netdisk" />{d.baiduCode && <span class="code"><T zh={`提取码 ${d.baiduCode}`} en={`Code ${d.baiduCode}`} /></span>}
+              </a>
+            ) : (
+              <span class="btn soon"><T zh="百度网盘 · 即将上线" en="Baidu · coming soon" /></span>
+            )}
+            {d.github ? (
+              <a class="btn ghost" href={d.github}>GitHub</a>
+            ) : (
+              <span class="btn ghost soon"><T zh="GitHub · 即将上线" en="GitHub · coming soon" /></span>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+    <p class="muted small"><T zh="国内建议用百度网盘下载；GitHub 在国内可能很慢。" en="GitHub is usually the faster option outside mainland China." /></p>
+    <details class="hash">
+      <summary><T zh="文件校验码（SHA256），用来确认下载的文件没被改过" en="SHA256 checksums" /></summary>
+      <ul>
+        {QINGXIN.downloads.map((d) => <li><code>{d.file}</code><br /><code class="sum">{d.sha256}</code></li>)}
+      </ul>
+    </details>
+  </section>
+
+  <section class="block two">
+    <div>
+      <h2><T zh="安装提示" en="Installing" /></h2>
+      <h3>Windows</h3>
+      <ol>
+        <li><T zh="第一次打开时，可能弹出蓝色的「Windows 已保护你的电脑」：点「更多信息」，再点「仍要运行」。" en="If you see “Windows protected your PC”, click “More info”, then “Run anyway”." /></li>
+        <li><T zh="这是因为青心是我个人做的，没有购买「数字签名」，不是病毒。" en="This shows up because Qingxin is a personal project without a paid code-signing certificate." /></li>
+        <li><T zh="个别杀毒软件可能误报（她会跟着鼠标、看输入框位置）。介意的话可以先不装。" en="Some antivirus tools may flag it because she follows the mouse and text boxes. Skip it if you're unsure." /></li>
+      </ol>
+      <h3><T zh="苹果电脑" en="Mac" /></h3>
+      <ol>
+        <li><T zh="双击 dmg，把「青心」拖到「应用程序」文件夹。" en="Open the dmg and drag Qingxin into Applications." /></li>
+        <li><T zh="第一次打开会被拦下：到「系统设置 → 隐私与安全性」，往下拉，点「仍要打开」。" en="If macOS blocks it, go to System Settings → Privacy & Security and click “Open Anyway”." /></li>
+        <li><T zh="想要打字陪伴：在「隐私与安全性 → 辅助功能」里打开青心的开关。" en="For the typing buddy, turn on Qingxin under Privacy & Security → Accessibility." /></li>
+        <li><T zh="需要 macOS 11 或更新的系统，M 系列和 Intel 芯片都可以。" en="Requires macOS 11 or later, on Apple silicon or Intel." /></li>
+      </ol>
+    </div>
+    <div>
+      <h2><T zh="隐私" en="Privacy" /></h2>
+      <ul>
+        <li><T zh="完全离线，不联网，不收集任何信息。" en="Works fully offline. Nothing is sent anywhere." /></li>
+        <li><T zh="只看输入框的位置和大小，不读你打的字。" en="She only checks where text boxes are, never what you type." /></li>
+        <li><T zh="存档只保存在你自己的电脑上。" en="Your save stays on your own computer." /></li>
+      </ul>
+      <h2><T zh="卸载" en="Uninstalling" /></h2>
+      <ul>
+        <li><T zh="Windows 安装版：设置 → 应用 → 青心 → 卸载。" en="Windows installer: Settings → Apps → Qingxin → Uninstall." /></li>
+        <li><T zh="Windows 免安装版：直接删掉整个文件夹。" en="Windows portable: delete the folder." /></li>
+        <li><T zh="苹果电脑：先在菜单栏青心头像里点「退出」，再把「应用程序」里的青心拖进废纸篓。" en="Mac: quit from the menu bar icon, then move Qingxin from Applications to the Trash." /></li>
+      </ul>
+      <p class="muted small"><T zh="想推荐给朋友？请分享这个页面的链接，不要把安装包转发到其他网盘或平台。" en="Want to share it? Please share this page rather than re-uploading the files elsewhere." /></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .crumb { margin: 24px 0 0; font-size: 14px; }
+  .crumb a { text-decoration: none; }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+    padding: 24px 0 40px;
+  }
+  .eyebrow { margin: 0; font-size: 12px; letter-spacing: 0.22em; color: var(--accent); }
+  h1 { margin: 6px 0 0; font-size: clamp(44px, 6vw, 72px); line-height: 1.1; font-weight: 900; color: var(--title); }
+  .tagline { margin: 14px 0 0; font-size: 20px; color: var(--muted); }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
+  .facts li { padding: 2px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-size: 13px; color: var(--accent-strong); }
+  .primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+    padding: 13px 26px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 4px 4px 0 var(--title);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .primary:hover { color: #fff; transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--title); }
+
+  /* 封面海报 */
+  .cover {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 4.2;
+    overflow: hidden;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.75), transparent 45%),
+      linear-gradient(160deg, #dcefc4, #b9de8c 60%, #9fcf6b);
+    box-shadow: 0 24px 50px rgba(23, 52, 4, 0.16);
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.55) 1.2px, transparent 1.2px);
+    background-size: 20px 20px;
+  }
+  /* 散步的青心：左右移动和换帧都由下面的脚本控制 */
+  .stroller {
+    position: absolute;
+    left: 0;
+    bottom: 7%;
+    width: 46%;
+    will-change: transform;
+  }
+  .pet { display: block; width: 100%; height: auto; filter: drop-shadow(0 12px 14px rgba(23, 52, 4, 0.16)); }
+  .pet.flip { transform: scaleX(-1); }
+  .say {
+    position: absolute;
+    left: 50%;
+    bottom: 96%;
+    z-index: 1;
+    margin: 0;
+    padding: 8px 14px;
+    border-radius: 16px;
+    background: #fff;
+    color: var(--title);
+    font-size: 14px;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    box-shadow: 0 6px 16px rgba(23, 52, 4, 0.12);
+    animation: say-in 0.3s ease-out;
+  }
+  .say::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    transform: translateX(-50%) rotate(45deg);
+  }
+  @keyframes say-in { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  .cover-label {
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px 8px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+  .cover-label img { border-radius: 50%; }
+  .cover-label strong { display: block; font-size: 16px; color: var(--title); line-height: 1.3; }
+  .cover-label span { font-size: 12px; color: var(--muted); }
+
+  .block {
+    margin-top: 24px;
+    padding: 32px 36px;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    scroll-margin-top: calc(var(--header-h) + 16px);
+  }
+  .block h2 { margin: 0 0 14px; font-size: 24px; color: var(--title); }
+  .block h3 { margin: 18px 0 6px; font-size: 16px; color: var(--accent-strong); }
+  .block ol, .block ul { padding-left: 1.3em; line-height: 1.85; }
+  .muted { color: var(--muted); }
+  .small { font-size: 14px; }
+
+  .features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 28px; margin: 0; padding: 0; list-style: none; }
+  .features li { position: relative; padding-left: 22px; }
+  .features li::before { content: '🍃'; position: absolute; left: 0; font-size: 13px; top: 3px; }
+
+  .shot { max-width: 720px; margin: 0 auto 24px; }
+  .shot img { width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line-soft); }
+  .gallery { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+  figure { margin: 0; text-align: center; }
+  .gallery img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: contain; padding: 8px; border-radius: 12px; background: var(--bg); }
+  figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+  .downloads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+  .dl { display: flex; flex-direction: column; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #fbfdf8; }
+  .dl-head h3 { margin: 4px 0 0; font-size: 17px; color: var(--title); }
+  .os { font-size: 12px; letter-spacing: 0.1em; color: var(--accent); }
+  .dl-note { flex: 1; margin: 8px 0; font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .dl-meta { margin: 0 0 12px; font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+  .dl-meta code { font-size: 11.5px; }
+  .dl-buttons { display: grid; gap: 8px; }
+  .btn {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px 8px;
+    padding: 9px 12px;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    text-decoration: none;
+    text-align: center;
+  }
+  .btn:hover { background: var(--accent-strong); color: #fff; }
+  .btn.ghost { background: transparent; color: var(--accent-strong); }
+  .btn.ghost:hover { background: var(--bg); color: var(--title); }
+  .btn .code { font-size: 12px; opacity: 0.9; }
+  .btn.soon { border-style: dashed; border-color: var(--line); background: transparent; color: var(--muted); cursor: default; }
+
+  .hash { margin-top: 14px; font-size: 13px; color: var(--muted); }
+  .hash summary { cursor: pointer; }
+  .hash .sum { font-size: 11px; overflow-wrap: anywhere; }
+
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+  .two h2 + h3 { margin-top: 4px; }
+  .two div > h2:not(:first-child) { margin-top: 22px; }
+
+  @media (max-width: 960px) {
+    .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .downloads { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-top: 16px; }
+    .features { grid-template-columns: minmax(0, 1fr); }
+    .two { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .block { padding: 24px 20px; }
+  }
+</style>
+
+<script>
+  // 封面：青心在封面里来回散步，走到一边停下来笑着说一句话，再转身往回走
+  type Line = { zh: string; en: string };
+  const cover = document.querySelector<HTMLElement>('[data-stroll]');
+  if (cover) {
+    const base = cover.dataset.base!;
+    const lines: Line[] = JSON.parse(cover.dataset.greetings ?? '[]');
+    const stroller = cover.querySelector<HTMLElement>('[data-stroller]')!;
+    const pet = cover.querySelector<HTMLImageElement>('[data-pet]')!;
+    const say = cover.querySelector<HTMLElement>('[data-say]')!;
+    const frames = (name: string, n: number) => Array.from({ length: n }, (_, i) => `${base}${name}-${String(i + 1).padStart(2, '0')}.webp`);
+    const walk = frames('walk', 8);
+    const happy = frames('happy', 6);
+    // 和桌面上的青心一样的节奏：走路每秒 7 帧，开心每秒 5 帧；每秒走封面宽度的 9%，停下来 3.2 秒
+    const WALK_FPS = 7;
+    const HAPPY_FPS = 5;
+    const SPEED = 0.09;
+    const PAUSE = 3200;
+    let lineIndex = 0;
+
+    function greet() {
+      if (lines.length === 0) return;
+      const { zh, en } = lines[lineIndex++ % lines.length];
+      say.innerHTML = `<span class="i18n-zh">${zh}</span><span class="i18n-en" lang="en">${en}</span>`;
+      say.hidden = false;
+    }
+
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // 系统设置了「减少动态效果」：只显示笑脸和一句问候，不走动
+      greet();
+    } else {
+      [...walk, ...happy].forEach((src) => { new Image().src = src; });
+      let x = 0;
+      let dir = 1;
+      let walking = false;
+      let modeStart = performance.now();
+      let last = modeStart;
+      let shown = pet.src;
+      const show = (src: string) => { if (src !== shown) { pet.src = src; shown = src; } };
+      greet();
+
+      const tick = (now: number) => {
+        const dt = Math.min(now - last, 100);
+        last = now;
+        const max = Math.max(0, cover.clientWidth - stroller.offsetWidth);
+        if (walking) {
+          x += dir * SPEED * cover.clientWidth * (dt / 1000);
+          if (x <= 0 || x >= max) {
+            x = Math.min(max, Math.max(0, x));
+            walking = false;
+            modeStart = now;
+            greet();
+          }
+          show(walk[Math.floor((now - modeStart) / (1000 / WALK_FPS)) % walk.length]);
+        } else {
+          show(happy[Math.floor((now - modeStart) / (1000 / HAPPY_FPS)) % happy.length]);
+          if (now - modeStart > PAUSE) {
+            say.hidden = true;
+            dir = x >= max / 2 ? -1 : 1;
+            walking = true;
+            modeStart = now;
+          }
+        }
+        // 走路的图是朝右的，往左走时镜像翻转；停下来笑的时候是正面，不翻
+        pet.classList.toggle('flip', walking && dir < 0);
+        stroller.style.transform = `translateX(${x}px)`;
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+  }
+</script>

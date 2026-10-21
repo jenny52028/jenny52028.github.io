@@ -9,6 +9,15 @@
 #   en：英文一句话介绍（不会写可以先空着，跟赛博说一声帮你翻译）
 # 注意：每行开头的空格要和上面对齐，冒号后面留一个空格。
 # 顺序：网站上按这个文件里的先后顺序显示。
+# 本站的介绍页：不写 url，改写 page（比如 /works/qingxin/），按钮会变成「了解详情 →」；image 是卡片上的小图标（可选）。
+
+- id: qingxin
+  name: 青心 · 桌面宠
+  page: /works/qingxin/
+  image: /works/qingxin/icon.webp
+  category: 我的作品
+  zh: 我做的养成系桌面宠：你打字时她会跑来坐在输入框上陪你，摸头、喂饭、回小家睡觉。支持 Windows 和苹果电脑。
+  en: A little desktop pet I made. She sits on your text box while you type, and you can pat, feed and tuck her in. For Windows and Mac.
 
 - id: codex
   name: Codex

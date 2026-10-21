@@ -20,7 +20,11 @@ const resources = defineCollection({
   loader: file('./资源/资源清单.yaml'),
   schema: z.object({
     name: z.string(),
-    url: z.string().url(),
+    // 外部网站填 url；本站的介绍页填 page（比如 /works/qingxin/）
+    url: z.string().url().optional(),
+    page: z.string().optional(),
+    // 卡片上的小图标（可选），放在 public 里
+    image: z.string().optional(),
     category: z.enum(RESOURCE_CATEGORIES),
     zh: z.string(),
     en: z.string().default(''),
